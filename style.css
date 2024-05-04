@@ -31,13 +31,15 @@ body {
 
 .main-section {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .cell-container {
   width: 25vw;
   height: 55vh;
   margin-top: 3rem;
+  margin-bottom: 1rem;
   display: grid;
   grid-gap: 0.5rem;
 }
@@ -58,4 +60,54 @@ body {
   align-items: center;
   color: white;
   font-size: 3rem;
+}
+
+.chars-container {
+  display: flex;
+  color: white;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.char,
+.enter-btn,
+.return-btn {
+  width: 3rem;
+  height: 4rem;
+  border: 1px solid white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.enter-btn {
+  width: 5rem;
+}
+
+.char,
+.enter-btn,
+.return-btn {
+  font-size: 1.5rem;
+}
+
+.btn {
+  transition: transform 0.1s;
+}
+
+.btn:hover {
+  cursor: pointer;
+  transform: scale(1.1);
+  background-color: #4b4b4b;
+  border: 1px solid #000000;
+}
+
+.enter-btn:hover {
+  background-color: #008100;
+  border: 1px solid #000000;
+}
+
+.return-btn:hover {
+  background-color: #be0000;
+  border: 1px solid #000000;
 }
