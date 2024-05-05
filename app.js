@@ -50,7 +50,7 @@ const addCharacter = (char) => {
   if (indexCount > 4) return;
 
   // Set the current row
-  let currentRow = setCurrentRow(tryCount);
+  const currentRow = setCurrentRow(tryCount);
 
   // Update the cell with the pressed char
   currentRow[indexCount].innerHTML = char;
@@ -59,9 +59,37 @@ const addCharacter = (char) => {
   indexCount++;
 };
 
+const validateRow = (row) => {
+  // Compare the characters in the row with the chosen word and change background color accordingly
+  row.forEach((cell, i) => {
+    const char = cell.innerHTML;
+    setTimeout(() => {
+      // Check if the letter is in the same place as in the word
+      if (char == word[i]) {
+        cell.classList.add("green-bg");
+        return;
+      } else if (word.includes(char)) {
+        cell.classList.add("yellow-bg");
+      } else {
+        cell.classList.add("red-bg");
+      }
+    }, i * 200);
+  });
+};
+
 // Listen for enter click
 enterButton.addEventListener("click", (event) => {
-  // Check
+  // Check if the the entire row is filled with characters
+  if (indexCount < 5) return;
+
+  // Add logic for checking wich characters are guessed correct
+  const currentRow = setCurrentRow(tryCount);
+  validateRow(currentRow);
+
+  // Increment the tryCount
+  tryCount++;
+  // Reset the indexCount
+  indexCount = 0;
 });
 
 // Listen for return click
@@ -73,7 +101,7 @@ returnButton.addEventListener("click", (event) => {
   indexCount--;
 
   // Replace the current cell with an _
-  let currentRow = setCurrentRow(tryCount);
+  const currentRow = setCurrentRow(tryCount);
   currentRow[indexCount].innerHTML = "_";
 });
 
