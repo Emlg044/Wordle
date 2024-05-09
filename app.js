@@ -27,6 +27,7 @@ const word = "COOLT";
 
 // Modal stuff
 let modal = document.getElementById("modal");
+let modalTitle = document.getElementById("modalTitle");
 let modalSpan = document.getElementsByClassName("close")[0];
 modalBtn = document.getElementById("modalBtn");
 
@@ -137,7 +138,23 @@ const validateRow = (row) => {
     }, i * 200);
   });
 
-  if (checkForWin(row)) displayModal();
+  // Check if the user guessed the word correct
+  if (checkForWin(row)) {
+    // Set the title on the modal
+    modalTitle.innerHTML = "Congratulations, you won!";
+    // Display the modal
+    displayModal();
+    return;
+  }
+
+  // Check if the last row has been played, if it has passed the checkForWin it means that the player lost the game
+  if (tryCount == 5) {
+    // Set the title on the modal
+    modalTitle.innerHTML = "You guessed incorrectly, you lost!";
+    // Display the modal
+    displayModal();
+    return;
+  }
 
   // Increment tryCount and reset indexCount
   tryCount++;
