@@ -19,17 +19,116 @@ const returnButton = document.querySelector(".return-btn");
 let tryCount = 0;
 // Initialize counter of the current guesses - represent the chars in the words
 let indexCount = 0;
-// Initialize array to hold the guessed chars
-let guessedChars = [];
+
+// Try setting above variables to session storage, .setItem("key", "value")
+
+const updateTryCountSessionStorage = () => {
+  // Update the session storage variable for the tryCount
+  sessionStorage.setItem("tryCount", tryCount);
+};
+const updateIndexCountSessionStorage = () => {
+  // Update the session storage variable for the tryCount
+  sessionStorage.setItem("indexCount", indexCount);
+};
+
+// sessionStorage.setItem("rowOne", JSON.stringify(rowOne));
+// sessionRow = sessionStorage.getItem("rowOne");
+// console.log(JSON.parse(sessionRow));
 
 // Temporary word to test with
-const word = "COOLT";
+let word = "";
+
+const fetchNewWord = async () => {
+  fetch("https://random-word-api.herokuapp.com/word?length=5")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      // Set word to fetched word
+      word = data[0].toUpperCase();
+      console.log(word);
+      // Set the word in the session storage
+      sessionStorage.setItem("word", word);
+    })
+    .catch((error) => {
+      console.error("There was a problem with the fetch operation:", error);
+    });
+};
+
+// Onload function to generate the playing field from session storage
+window.onload = () => {
+  // Check if word exists in session storage
+  if (sessionStorage.getItem("word") === null) {
+    console.log("Setting new word...");
+    fetchNewWord();
+  }
+  // Check if rows exists in session storage, if not create row objects
+  if (sessionStorage.getItem("row1") === null) {
+    // Initialize object to store row values
+    let rowObj = {
+      cell1: {
+        char: "",
+        col: "",
+      },
+      cell2: {
+        char: "yo",
+        col: "",
+      },
+      cell3: {
+        char: "",
+        col: "",
+      },
+      cell4: {
+        char: "",
+        col: "",
+      },
+      cell5: {
+        char: "",
+        col: "",
+      },
+    };
+    // Create a loop to create objects for each of the rows
+    for (let i = 0; i < 5; i++) {
+      sessionStorage.setItem(`row${i + 1}`, JSON.stringify(rowObj));
+    }
+    console.log("Initiated session storage");
+  }
+};
+
+// Updates sessionStorage, rowNum - int to represent the row, cellNum - int to represent cell
+const updateSessionStorageChar = (rowNum, cellNum, newChar) => {
+  // Get the row object from the session storage
+  let rowObject = JSON.parse(sessionStorage.getItem(`row${rowNum}`));
+  // Update the correct cell using switch
+  switch (cellNum) {
+    case 1:
+      rowObject.cell1.char = newChar;
+      break;
+    case 2:
+      rowObject.cell2.char = newChar;
+      break;
+    case 3:
+      rowObject.cell3.char = newChar;
+      break;
+    case 4:
+      rowObject.cell4.char = newChar;
+      break;
+    case 5:
+      rowObject.cell5.char = newChar;
+      break;
+  }
+  // Set the updated object so session storage
+  sessionStorage.setItem(`row${rowNum}`, JSON.stringify(rowObject));
+};
 
 // Modal stuff
 let modal = document.getElementById("modal");
 let modalTitle = document.getElementById("modalTitle");
 let modalSpan = document.getElementsByClassName("close")[0];
-modalBtn = document.getElementById("modalBtn");
+let modalBtn = document.getElementById("modalBtn");
 
 // Displays the modal
 const displayModal = () => {
@@ -86,6 +185,7 @@ const addCharacter = (char, btn) => {
 
   // Increment the counter representing the current character in the word
   indexCount++;
+  updateIndexCountSessionStorage();
 };
 
 const removeLastCharacter = () => {
@@ -94,6 +194,7 @@ const removeLastCharacter = () => {
 
   // Decrement the indexCount
   indexCount--;
+  updateIndexCountSessionStorage();
 
   // Replace the current cell with an _
   const currentRow = getCurrentRow(tryCount);
@@ -102,6 +203,8 @@ const removeLastCharacter = () => {
 
 // Add - check that all fields are filled before entering
 const validateRow = (row) => {
+  const colorsArr = [];
+
   // Compare the characters in the row with the chosen word and change background color accordingly
   row.forEach((cell, i) => {
     const char = cell.innerHTML;
@@ -130,13 +233,18 @@ const validateRow = (row) => {
       // Check if the letter is in the same place as in the word
       if (char == word[i]) {
         cell.classList.add("green-bg");
+        colorsArr.push("green-bg");
       } else if (hasChar) {
         cell.classList.add("yellow-bg");
+        colorsArr.push("yellow-bg");
       } else {
         cell.classList.add("red-bg");
+        colorsArr.push("red-bg");
       }
     }, i * 200);
   });
+
+  createRowObjectForSessionStorage(row, colorsArr);
 
   // Check if the user guessed the word correct
   if (checkForWin(row)) {
@@ -158,7 +266,9 @@ const validateRow = (row) => {
 
   // Increment tryCount and reset indexCount
   tryCount++;
+  updateTryCountSessionStorage();
   indexCount = 0;
+  updateIndexCountSessionStorage();
 };
 
 const checkForWin = (row) => {
@@ -219,9 +329,14 @@ const resetGame = () => {
     removeClasses(charBtn);
   });
 
+  // Set new word
+  fetchNewWord();
+
   // Reset the tryCount and indexCount to zero
   tryCount = 0;
+  updateTryCountSessionStorage();
   indexCount = 0;
+  updateIndexCountSessionStorage();
 };
 
 // Listen for enter click
@@ -232,11 +347,6 @@ enterButton.addEventListener("click", (event) => {
   // Add logic for checking wich characters are guessed correct
   const currentRow = getCurrentRow(tryCount);
   validateRow(currentRow);
-
-  // Increment the tryCount
-  tryCount++;
-  // Reset the indexCount
-  indexCount = 0;
 });
 
 // Listen for return key click
