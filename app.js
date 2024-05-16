@@ -20,20 +20,23 @@ let tryCount = 0;
 // Initialize counter of the current guesses - represent the chars in the words
 let indexCount = 0;
 
-// Try setting above variables to session storage, .setItem("key", "value")
+// Modal stuff
+let modal = document.getElementById("modal");
+let modalTitle = document.getElementById("modalTitle");
+let modalSpan = document.getElementsByClassName("close")[0];
+let modalBtn = document.getElementById("modalBtn");
 
-const updateTryCountSessionStorage = () => {
-  // Update the session storage variable for the tryCount
-  sessionStorage.setItem("tryCount", tryCount);
-};
-const updateIndexCountSessionStorage = () => {
-  // Update the session storage variable for the tryCount
-  sessionStorage.setItem("indexCount", indexCount);
+// Displays the modal
+const displayModal = () => {
+  modal.style.display = "block";
 };
 
-// sessionStorage.setItem("rowOne", JSON.stringify(rowOne));
-// sessionRow = sessionStorage.getItem("rowOne");
-// console.log(JSON.parse(sessionRow));
+// Hides the modal and resets the game
+modalBtn.addEventListener("click", () => {
+  modal.style.display = "none";
+  // Add restart to the game
+  resetGame();
+});
 
 // Temporary word to test with
 let word = "";
@@ -62,6 +65,7 @@ const fetchNewWord = async () => {
 window.onload = () => {
   // Check if word exists in session storage
   if (sessionStorage.getItem("word") === null) {
+    // If a word does not exist, set a new word
     console.log("Setting new word...");
     fetchNewWord();
   }
@@ -95,7 +99,23 @@ window.onload = () => {
       sessionStorage.setItem(`row${i + 1}`, JSON.stringify(rowObj));
     }
     console.log("Initiated session storage");
+  } else {
+    // If sessionStorage items exist, update the field from the session storage data
   }
+};
+
+// ---- Session storage handling ----
+
+// Updates the tryCount in sessionStorage
+const updateTryCountSessionStorage = () => {
+  // Update the session storage variable for the tryCount
+  sessionStorage.setItem("tryCount", tryCount);
+};
+
+// Updates the indexCount in sessionStorage
+const updateIndexCountSessionStorage = () => {
+  // Update the session storage variable for the tryCount
+  sessionStorage.setItem("indexCount", indexCount);
 };
 
 // Updates sessionStorage, rowNum - int to represent the row, cellNum - int to represent cell
@@ -124,23 +144,35 @@ const updateSessionStorageChar = (rowNum, cellNum, newChar) => {
   sessionStorage.setItem(`row${rowNum}`, JSON.stringify(rowObject));
 };
 
-// Modal stuff
-let modal = document.getElementById("modal");
-let modalTitle = document.getElementById("modalTitle");
-let modalSpan = document.getElementsByClassName("close")[0];
-let modalBtn = document.getElementById("modalBtn");
-
-// Displays the modal
-const displayModal = () => {
-  modal.style.display = "block";
+// Updates the color of cell in session storage
+const updateSessionStorageColor = (rowNum, cellNum, color) => {
+  // Get the row
+  const row = `row${rowNum}`;
+  // Get the row object from the session storage
+  let rowObject = JSON.parse(sessionStorage.getItem(row));
+  // Update the correct cell
+  switch (cellNum) {
+    case 1:
+      rowObject.cell1.col = color;
+      break;
+    case 2:
+      rowObject.cell2.col = color;
+      break;
+    case 3:
+      rowObject.cell3.col = color;
+      break;
+    case 4:
+      rowObject.cell4.col = color;
+      break;
+    case 5:
+      rowObject.cell5.col = color;
+      break;
+  }
+  // Update the session storage item
+  sessionStorage.setItem(row, JSON.stringify(rowObject));
 };
 
-// Hides the modal and resets the game
-modalBtn.addEventListener("click", () => {
-  modal.style.display = "none";
-  // Add restart to the game
-  resetGame();
-});
+// ---- Get functions ----
 
 // Returns the row element specefied by the tryCount
 const getCurrentRow = (tryCount) => {
@@ -182,6 +214,9 @@ const addCharacter = (char, btn) => {
 
   // Update the cell with the pressed char
   currentRow[indexCount].innerHTML = char;
+
+  // Update character in session storage
+  updateSessionStorageChar(tryCount + 1, indexCount + 1, char);
 
   // Increment the counter representing the current character in the word
   indexCount++;
@@ -234,17 +269,18 @@ const validateRow = (row) => {
       if (char == word[i]) {
         cell.classList.add("green-bg");
         colorsArr.push("green-bg");
+        updateSessionStorageColor(tryCount, i, "green-bg");
       } else if (hasChar) {
         cell.classList.add("yellow-bg");
         colorsArr.push("yellow-bg");
+        updateSessionStorageColor(tryCount, i, "yellow-bg");
       } else {
         cell.classList.add("red-bg");
         colorsArr.push("red-bg");
+        updateSessionStorageColor(tryCount, i, "red-bg");
       }
     }, i * 200);
   });
-
-  createRowObjectForSessionStorage(row, colorsArr);
 
   // Check if the user guessed the word correct
   if (checkForWin(row)) {
