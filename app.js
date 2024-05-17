@@ -16,9 +16,9 @@ const enterButton = document.querySelector(".enter-btn");
 const returnButton = document.querySelector(".return-btn");
 
 // Initialize counter of the tries - represents rows
-let tryCount = 0;
+let tryCount;
 // Initialize counter of the current guesses - represent the chars in the words
-let indexCount = 0;
+let indexCount;
 
 // Modal stuff
 let modal = document.getElementById("modal");
@@ -94,13 +94,22 @@ window.onload = () => {
         col: "",
       },
     };
+
+    // Initialize tryCount and indexCount
+    tryCount = 0;
+    indexCount = 0;
+
     // Create a loop to create objects for each of the rows
     for (let i = 0; i < 5; i++) {
       sessionStorage.setItem(`row${i + 1}`, JSON.stringify(rowObj));
     }
     console.log("Initiated session storage");
   } else {
+    // Get the tryCount and indexCount
+    tryCount = sessionStorage.getItem("tryCount");
+    indexCount = sessionStorage.getItem("indexCount");
     // If sessionStorage items exist, update the field from the session storage data
+    generateFieldFromSessionStorage();
   }
 };
 
@@ -172,6 +181,112 @@ const updateSessionStorageColor = (rowNum, cellNum, color) => {
   sessionStorage.setItem(row, JSON.stringify(rowObject));
 };
 
+const generateFieldFromSessionStorage = () => {
+  // Get rows from session storage
+  const row1 = JSON.parse(sessionStorage.getItem("row1"));
+  const row2 = JSON.parse(sessionStorage.getItem("row2"));
+  const row3 = JSON.parse(sessionStorage.getItem("row3"));
+  const row4 = JSON.parse(sessionStorage.getItem("row4"));
+  const row5 = JSON.parse(sessionStorage.getItem("row5"));
+  const row6 = JSON.parse(sessionStorage.getItem("row6"));
+
+  // Iterate over the playing field rows
+  rowOne.forEach((cell, i) => {
+    // Get the cell object from the session storage
+    sessionStorageCell = getRowCell(row1, i + 1);
+    // Get the char
+    char = sessionStorageCell.char;
+    if (char === "") char = "_";
+    // Get the color
+    color = sessionStorageCell.col;
+    // Update the playing field cell
+    cell.innerHTML = char;
+    cell.classList.add(color);
+  });
+  rowTwo.forEach((cell, i) => {
+    // Get the cell object from the session storage
+    sessionStorageCell = getRowCell(row2, i + 1);
+    // Get the char
+    char = sessionStorageCell.char;
+    if (char === "") char = "_";
+    // Get the color
+    color = sessionStorageCell.col;
+    // Update the playing field cell
+    cell.innerHTML = char;
+    cell.classList.add(color);
+  });
+  rowThree.forEach((cell, i) => {
+    // Get the cell object from the session storage
+    sessionStorageCell = getRowCell(row3, i + 1);
+    // Get the char
+    char = sessionStorageCell.char;
+    if (char === "") char = "_";
+    // Get the color
+    color = sessionStorageCell.col;
+    // Update the playing field cell
+    cell.innerHTML = char;
+    cell.classList.add(color);
+  });
+  rowFour.forEach((cell, i) => {
+    // Get the cell object from the session storage
+    sessionStorageCell = getRowCell(row4, i + 1);
+    // Get the char
+    char = sessionStorageCell.char;
+    if (char === "") char = "_";
+    // Get the color
+    color = sessionStorageCell.col;
+    // Update the playing field cell
+    cell.innerHTML = char;
+    cell.classList.add(color);
+  });
+  rowFive.forEach((cell, i) => {
+    // Get the cell object from the session storage
+    sessionStorageCell = getRowCell(row5, i + 1);
+    // Get the char
+    char = sessionStorageCell.char;
+    if (char === "") char = "_";
+    // Get the color
+    color = sessionStorageCell.col;
+    // Update the playing field cell
+    cell.innerHTML = char;
+    cell.classList.add(color);
+  });
+  rowSix.forEach((cell, i) => {
+    // Get the cell object from the session storage
+    sessionStorageCell = getRowCell(row6, i + 1);
+    // Get the char
+    char = sessionStorageCell.char;
+    if (char === "") char = "_";
+    // Get the color
+    color = sessionStorageCell.col;
+    // Update the playing field cell
+    cell.innerHTML = char;
+    cell.classList.add(color);
+  });
+};
+
+const getRowCell = (row, cellNum) => {
+  let returnChar;
+  switch (cellNum) {
+    case 1:
+      returnChar = row.cell1;
+      break;
+    case 2:
+      returnChar = row.cell2;
+      break;
+    case 3:
+      returnChar = row.cell3;
+      break;
+    case 4:
+      returnChar = row.cell4;
+      break;
+    case 5:
+      returnChar = row.cell5;
+      break;
+  }
+  return returnChar;
+};
+
 // ---- Get functions ----
 
 // Returns the row element specefied by the tryCount
@@ -238,8 +353,6 @@ const removeLastCharacter = () => {
 
 // Add - check that all fields are filled before entering
 const validateRow = (row) => {
-  const colorsArr = [];
-
   // Compare the characters in the row with the chosen word and change background color accordingly
   row.forEach((cell, i) => {
     const char = cell.innerHTML;
@@ -268,16 +381,13 @@ const validateRow = (row) => {
       // Check if the letter is in the same place as in the word
       if (char == word[i]) {
         cell.classList.add("green-bg");
-        colorsArr.push("green-bg");
-        updateSessionStorageColor(tryCount, i, "green-bg");
+        updateSessionStorageColor(tryCount, i + 1, "green-bg");
       } else if (hasChar) {
         cell.classList.add("yellow-bg");
-        colorsArr.push("yellow-bg");
-        updateSessionStorageColor(tryCount, i, "yellow-bg");
+        updateSessionStorageColor(tryCount, i + 1, "yellow-bg");
       } else {
         cell.classList.add("red-bg");
-        colorsArr.push("red-bg");
-        updateSessionStorageColor(tryCount, i, "red-bg");
+        updateSessionStorageColor(tryCount, i + 1, "red-bg");
       }
     }, i * 200);
   });
