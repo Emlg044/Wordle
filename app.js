@@ -78,7 +78,7 @@ window.onload = () => {
         col: "",
       },
       cell2: {
-        char: "yo",
+        char: "",
         col: "",
       },
       cell3: {
@@ -106,11 +106,13 @@ window.onload = () => {
     console.log("Initiated session storage");
   } else {
     // Get the tryCount and indexCount
-    tryCount = sessionStorage.getItem("tryCount");
-    indexCount = sessionStorage.getItem("indexCount");
+    tryCount = JSON.parse(sessionStorage.getItem("tryCount"));
+    indexCount = JSON.parse(sessionStorage.getItem("indexCount"));
     // If sessionStorage items exist, update the field from the session storage data
     generateFieldFromSessionStorage();
   }
+
+  console.log(tryCount + " " + indexCount);
 };
 
 // ---- Session storage handling ----
@@ -197,11 +199,17 @@ const generateFieldFromSessionStorage = () => {
     // Get the char
     char = sessionStorageCell.char;
     if (char === "") char = "_";
-    // Get the color
-    color = sessionStorageCell.col;
+
     // Update the playing field cell
     cell.innerHTML = char;
-    cell.classList.add(color);
+
+    // Get the color
+    cellCol = sessionStorageCell.col;
+
+    // Check if the color is empty, then just return
+    if (cellCol === "") return;
+
+    cell.classList.add(cellCol);
   });
   rowTwo.forEach((cell, i) => {
     // Get the cell object from the session storage
@@ -209,11 +217,16 @@ const generateFieldFromSessionStorage = () => {
     // Get the char
     char = sessionStorageCell.char;
     if (char === "") char = "_";
-    // Get the color
-    color = sessionStorageCell.col;
+
     // Update the playing field cell
     cell.innerHTML = char;
-    cell.classList.add(color);
+    // Get the color
+    cellCol = sessionStorageCell.col;
+
+    // Check if the color is empty, then just return
+    if (cellCol === "") return;
+
+    cell.classList.add(cellCol);
   });
   rowThree.forEach((cell, i) => {
     // Get the cell object from the session storage
@@ -221,11 +234,16 @@ const generateFieldFromSessionStorage = () => {
     // Get the char
     char = sessionStorageCell.char;
     if (char === "") char = "_";
-    // Get the color
-    color = sessionStorageCell.col;
+
     // Update the playing field cell
     cell.innerHTML = char;
-    cell.classList.add(color);
+    // Get the color
+    cellCol = sessionStorageCell.col;
+
+    // Check if the color is empty, then just return
+    if (cellCol === "") return;
+
+    cell.classList.add(cellCol);
   });
   rowFour.forEach((cell, i) => {
     // Get the cell object from the session storage
@@ -233,11 +251,16 @@ const generateFieldFromSessionStorage = () => {
     // Get the char
     char = sessionStorageCell.char;
     if (char === "") char = "_";
-    // Get the color
-    color = sessionStorageCell.col;
+
     // Update the playing field cell
     cell.innerHTML = char;
-    cell.classList.add(color);
+    // Get the color
+    cellCol = sessionStorageCell.col;
+
+    // Check if the color is empty, then just return
+    if (cellCol === "") return;
+
+    cell.classList.add(cellCol);
   });
   rowFive.forEach((cell, i) => {
     // Get the cell object from the session storage
@@ -245,11 +268,16 @@ const generateFieldFromSessionStorage = () => {
     // Get the char
     char = sessionStorageCell.char;
     if (char === "") char = "_";
-    // Get the color
-    color = sessionStorageCell.col;
+
     // Update the playing field cell
     cell.innerHTML = char;
-    cell.classList.add(color);
+    // Get the color
+    cellCol = sessionStorageCell.col;
+
+    // Check if the color is empty, then just return
+    if (cellCol === "") return;
+
+    cell.classList.add(cellCol);
   });
   rowSix.forEach((cell, i) => {
     // Get the cell object from the session storage
@@ -257,11 +285,14 @@ const generateFieldFromSessionStorage = () => {
     // Get the char
     char = sessionStorageCell.char;
     if (char === "") char = "_";
-    // Get the color
-    color = sessionStorageCell.col;
     // Update the playing field cell
     cell.innerHTML = char;
-    cell.classList.add(color);
+
+    // Get the color
+    cellCol = sessionStorageCell.col;
+    // Check if the color is empty, then just return
+    if (cellCol === "") return;
+    cell.classList.add(cellCol);
   });
 };
 
