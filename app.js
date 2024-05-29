@@ -54,7 +54,7 @@ const fetchNewWord = async () => {
       word = data[0].toUpperCase();
       console.log(word);
       // Set the word in the session storage
-      sessionStorage.setItem("word", word);
+      sessionStorage.setItem("word", JSON.stringify(word));
     })
     .catch((error) => {
       console.error("There was a problem with the fetch operation:", error);
@@ -68,6 +68,9 @@ window.onload = () => {
     // If a word does not exist, set a new word
     console.log("Setting new word...");
     fetchNewWord();
+  } else {
+    // If a word exists in the session storage, retrive it and set the word variable to it
+    word = JSON.parse(sessionStorage.getItem("word"));
   }
   // Check if rows exists in session storage, if not create row objects
   if (sessionStorage.getItem("row1") === null) {
@@ -99,6 +102,10 @@ window.onload = () => {
     tryCount = 0;
     indexCount = 0;
 
+    // Update the tryCount and indexCount in the session storage
+    updateTryCountSessionStorage();
+    updateIndexCountSessionStorage();
+
     // Create a loop to create objects for each of the rows
     for (let i = 0; i < 5; i++) {
       sessionStorage.setItem(`row${i + 1}`, JSON.stringify(rowObj));
@@ -108,11 +115,10 @@ window.onload = () => {
     // Get the tryCount and indexCount
     tryCount = JSON.parse(sessionStorage.getItem("tryCount"));
     indexCount = JSON.parse(sessionStorage.getItem("indexCount"));
+
     // If sessionStorage items exist, update the field from the session storage data
     generateFieldFromSessionStorage();
   }
-
-  console.log(tryCount + " " + indexCount);
 };
 
 // ---- Session storage handling ----
@@ -120,13 +126,13 @@ window.onload = () => {
 // Updates the tryCount in sessionStorage
 const updateTryCountSessionStorage = () => {
   // Update the session storage variable for the tryCount
-  sessionStorage.setItem("tryCount", tryCount);
+  sessionStorage.setItem("tryCount", JSON.stringify(tryCount));
 };
 
 // Updates the indexCount in sessionStorage
 const updateIndexCountSessionStorage = () => {
   // Update the session storage variable for the tryCount
-  sessionStorage.setItem("indexCount", indexCount);
+  sessionStorage.setItem("indexCount", JSON.stringify(indexCount));
 };
 
 // Updates sessionStorage, rowNum - int to represent the row, cellNum - int to represent cell
